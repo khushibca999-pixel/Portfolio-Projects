@@ -1,4 +1,6 @@
 ##Mini Portfolio project - To-Do App
+import json
+import os
 
 # ---------------Welcome Screen------------------------
 
@@ -47,6 +49,17 @@ def menu():
 
 task_list=[]   
 
+def save_tasks():
+
+    print(os.getcwd())
+
+    with open("tasks.json", "w") as file:
+
+        json.dump(task_list, file, indent=4)
+
+    print("Tasks Saved!")
+
+
 def display_task(index, task):
 
     print("-" * 40)
@@ -76,6 +89,9 @@ def add_task():
     }
 
     task_list.append(task)
+    #print(task_list)
+
+    save_tasks()
 
     print("\n✅ Task Added Successfully!")
     print("-"*40)
@@ -125,6 +141,8 @@ def update_task():
         task["Description"] = input("New Description: ")
         task["Priority"] = input("New Priority: ")
 
+        save_tasks()
+
         print("✅ Task Updated Successfully!")
 
     except ValueError:
@@ -155,6 +173,8 @@ def delete_task():
             return
 
         task_list.pop(task_number-1)
+
+        save_tasks()
 
         print("Task Deleted Successfully!")
          
@@ -207,6 +227,8 @@ def update_task_status():
         else:
             print("Invalid choice.")  
             return
+
+        save_tasks()
 
         print("Status Updated Successfully!")
 
