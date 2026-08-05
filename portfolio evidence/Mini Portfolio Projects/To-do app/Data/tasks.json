@@ -1,0 +1,23 @@
+[
+    {
+        "Category": "Study",
+        "Title": "error'",
+        "Description": "handling broken file",
+        "Priority": "High",
+        "Status": "Pending"
+    },
+    {
+        "Category": "Study",
+        "Title": "Project to do app",
+        "Description": "Building features: Json and UI",
+        "Priority": "High",
+        "Status": "Pending"
+    },
+    {
+        "Category": "Shopping",
+        "Title": "buying courses",
+        "Description": "",
+        "Priority": "Medium",
+        "Status": "Pending"
+    }
+]
