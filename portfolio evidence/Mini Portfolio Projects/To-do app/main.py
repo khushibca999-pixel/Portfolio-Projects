@@ -47,24 +47,53 @@ def menu():
     """)
 
 
-task_list=[]   
+ 
 
 def save_tasks():
 
     print(os.getcwd())
 
-    with open("tasks.json", "w") as file:
+    with open("Data/tasks.json", "w") as file:
 
         json.dump(task_list, file, indent=4)
 
     print("Tasks Saved!")
 
 
+def load_tasks():
+
+    global task_list
+
+    if not os.path.exists("Data/tasks.json"):
+        task_list=[]
+        return
+
+    try:
+
+        with open("Data/tasks.json", "r") as file:
+
+            task_list = json.load(file)
+
+
+    except json.JSONDecodeError:
+
+        task_list = []    
+
+    print(f"Loaded {len(task_list)} task(s).")    
+
+
+task_list=[]
+
+load_tasks()
+
+
 def display_task(index, task):
 
     print("-" * 40)
+
     print(f"Task {index}")
 
+    print(f"Category    : {task['Category']}")
     print(f"Title       : {task['Title']}")
     print(f"Description : {task['Description']}")
     print(f"Priority    : {task['Priority']}")
@@ -72,16 +101,70 @@ def display_task(index, task):
 
     print("-" * 40)
 
+
+
 def add_task():
     print("-"*40)
     print("Add Tasks")
     print("-"*40)
 
-    title=input("Title:")
-    description=input("Description:")
-    priority=input("Priority [Highest/Medium/Low]:")  
+    print("""
+    Select Category
+
+    1. Shopping
+    2. Study
+    3. Home
+    4. Travel
+    5. Work
+    6. Personal
+    7. Health
+    8. Others
+    """)
+
+    category_choice=input("Choose category:")
+
+    categories = {
+
+        "1": "Shopping",
+        "2": "Study",
+        "3": "Home",
+        "4": "Travel",
+        "5": "Work",
+        "6": "Personal",
+        "7": "Health",
+        "8": "Others"
+
+    }
+
+    if category_choice not in categories:
+        print("Invalid Category !")
+        return
+
+    category=categories[category_choice]
+   
+    title=input("Task title:").strip()
+
+    if not title:
+        print("Task title cannot be empty.")
+        print("-"*40)
+        return
+    
+    
+    description=input("Description (Optional):").strip()
+
+    priority=input("Priority [High/Medium/Low] (Press enter for Medium):").title().strip()  
+
+    if priority=="":
+        priority="Medium"
+
+    elif priority not in ["High","Medium","Low"]:
+        print("Invalid Priority.")
+        print("-"*40)
+        return
+ 
 
     task={
+        "Category":category,
         "Title":title,
         "Description":description,
         "Priority":priority,
@@ -89,8 +172,7 @@ def add_task():
     }
 
     task_list.append(task)
-    #print(task_list)
-
+   
     save_tasks()
 
     print("\n✅ Task Added Successfully!")
@@ -110,8 +192,9 @@ def view_tasks():
     for index,task in enumerate(task_list ,start=1):
 
         display_task(index, task)
-
-        print("-" * 40)
+        print(f"\n Total tasks : {len(task_list)}")
+        
+    print("-" * 40)
 
 def update_task():
 
@@ -137,9 +220,12 @@ def update_task():
 
         task = task_list[task_number - 1]
 
-        task["Title"] = input("New Title: ")
-        task["Description"] = input("New Description: ")
-        task["Priority"] = input("New Priority: ")
+        task["Title"] = input("New Task Title: ").strip()
+        task["Description"] = input("New Description: ").strip()
+        priority = input("New Priority [high/Medium/Low]: ").title().strip()
+
+        if priority in ["High","Medium","Low"]:
+            task["Priority"]=priority
 
         save_tasks()
 
@@ -182,6 +268,7 @@ def delete_task():
     except ValueError:
         print("Please enter a valid number")
 
+    print(f"\nTotal Available Tasks : {len(task_list)}")
     print("-" * 40)
 
 
@@ -249,22 +336,24 @@ def search_task():
         print("-" * 40)
         return
 
-    keyword=input("Enter title to search: ").title()
+    keyword=input("Enter task title to search: ").strip().lower()
 
     found=False
     
     for index , task in enumerate(task_list ,start=1):
 
-        if keyword in task["Title"].title():
+        if keyword in task["Title"].lower():
 
             found=True
 
             display_task(index, task)
             print("-" * 40)
 
-        if not found:
-            print("No matching task found.")   
-            print("-" * 40)
+    if not found:
+        print("No matching task found.")   
+
+    print(f"\nTotal Tasks : {len(task_list)}")
+    print("-" * 40)
 
 
 def filter_task():
@@ -346,6 +435,7 @@ def filter_by_status():
 
             found = True
             display_task(index, task)
+            print(f"\nTotal Tasks : {len(task_list)}")
 
     if not found:
 
@@ -398,6 +488,7 @@ def filter_by_priority():
 
             found = True
             display_task(index, task)
+            print(f"\nTotal Tasks : {len(task_list)}")
 
     if not found:
 
